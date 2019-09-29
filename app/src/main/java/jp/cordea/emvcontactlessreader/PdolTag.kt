@@ -4,6 +4,26 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 sealed class PdolTag(rawTag: List<Int>) {
+    companion object {
+        fun from(data: List<Byte>): List<PdolTag> =
+            data
+                .zipWithNext()
+                .mapNotNull {
+                    when {
+                        TerminalTransactionQualifiers.match(it) -> TerminalTransactionQualifiers
+                        AmountAuthorised.match(it) -> AmountAuthorised
+                        AmountOther.match(it) -> AmountOther
+                        TerminalCountryCode.match(it) -> TerminalCountryCode
+                        TerminalVerificationResults.match(it) -> TerminalVerificationResults
+                        TransactionCurrencyCode.match(it) -> TransactionCurrencyCode
+                        TransactionDate.match(it) -> TransactionDate
+                        TransactionType.match(it) -> TransactionType
+                        UnpredictableNumber.match(it) -> UnpredictableNumber
+                        else -> null
+                    }
+                }
+    }
+
     private val tag = rawTag.map { it.toByte() }
 
     fun match(pair: Pair<Byte, Byte>): Boolean =
@@ -15,31 +35,31 @@ sealed class PdolTag(rawTag: List<Int>) {
 
     abstract fun fill(): List<Int>
 
-    class TerminalTransactionQualifiers : PdolTag(listOf(0x9F, 0x66)) {
-        override fun fill(): List<Int> = throw NotImplementedError()
+    object TerminalTransactionQualifiers : PdolTag(listOf(0x9F, 0x66)) {
+        override fun fill(): List<Int> = TtqBuilder().offlineOnly().build()
     }
 
-    class AmountAuthorised() : PdolTag(listOf(0x9F, 0x02)) {
+    object AmountAuthorised : PdolTag(listOf(0x9F, 0x02)) {
         override fun fill(): List<Int> = listOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
     }
 
-    class AmountOther() : PdolTag(listOf(0x9F, 0x03)) {
+    object AmountOther : PdolTag(listOf(0x9F, 0x03)) {
         override fun fill(): List<Int> = listOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
     }
 
-    class TerminalCountryCode() : PdolTag(listOf(0x9F, 0x1A)) {
+    object TerminalCountryCode : PdolTag(listOf(0x9F, 0x1A)) {
         override fun fill(): List<Int> = listOf(0x03, 0x92)
     }
 
-    class TerminalVerificationResults() : PdolTag(listOf(0x95)) {
+    object TerminalVerificationResults : PdolTag(listOf(0x95)) {
         override fun fill(): List<Int> = listOf(0x00, 0x00, 0x00, 0x00, 0x00)
     }
 
-    class TransactionCurrencyCode() : PdolTag(listOf(0x5F, 0x2A)) {
+    object TransactionCurrencyCode : PdolTag(listOf(0x5F, 0x2A)) {
         override fun fill(): List<Int> = listOf(0x03, 0x92)
     }
 
-    class TransactionDate() : PdolTag(listOf(0x9A)) {
+    object TransactionDate : PdolTag(listOf(0x9A)) {
         override fun fill(): List<Int> =
             SimpleDateFormat("yy MM dd", Locale.getDefault())
                 .format(Date())
@@ -47,11 +67,11 @@ sealed class PdolTag(rawTag: List<Int>) {
                 .map { it.toInt(16) }
     }
 
-    class TransactionType() : PdolTag(listOf(0x9C)) {
+    object TransactionType : PdolTag(listOf(0x9C)) {
         override fun fill(): List<Int> = listOf(0x00)
     }
 
-    class UnpredictableNumber() : PdolTag(listOf(0x9F, 0x37)) {
+    object UnpredictableNumber : PdolTag(listOf(0x9F, 0x37)) {
         override fun fill(): List<Int> = listOf(0x00, 0x00, 0x00, 0x10)
     }
 }

@@ -1,7 +1,7 @@
 package jp.cordea.emvcontactlessreader
 
 class TtqBuilder {
-    private val ttq = arrayOf(0x00, 0x00, 0x00, 0x00)
+    private val ttq = mutableListOf(0x00, 0x00, 0x00, 0x00)
 
     fun supportContactless() = apply {
         ttq[0] = ttq[0] or 0x40
@@ -47,5 +47,5 @@ class TtqBuilder {
         ttq[3] = ttq[3] or 0x80
     }
 
-    fun build(): Array<Int> = ttq
+    fun build(): List<Int> = ttq
 }
