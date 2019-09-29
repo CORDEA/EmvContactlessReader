@@ -1,0 +1,5 @@
+package jp.cordea.emvcontactlessreader
+
+object ApplicationIdentifier {
+    val VISA = arrayOf(0xA0, 0x00, 0x00, 0x00, 0x03, 0x10, 0x10)
+}
