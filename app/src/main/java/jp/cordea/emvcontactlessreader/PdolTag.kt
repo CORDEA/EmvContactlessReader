@@ -36,7 +36,7 @@ sealed class PdolTag(rawTag: List<Int>) {
     abstract fun fill(): List<Int>
 
     object TerminalTransactionQualifiers : PdolTag(listOf(0x9F, 0x66)) {
-        override fun fill(): List<Int> = TtqBuilder().offlineOnly().build()
+        override fun fill(): List<Int> = TtqBuilder().supportEmvMode().offlineOnly().build()
     }
 
     object AmountAuthorised : PdolTag(listOf(0x9F, 0x02)) {
