@@ -18,3 +18,20 @@ class SelectCommand(private val dep: IsoDep) : Command() {
         )
     }
 }
+
+class GpoCommand(private val dep: IsoDep) : Command() {
+    companion object {
+        private val GPO = arrayOf(0x80, 0xA8, 0x00, 0x00)
+    }
+
+    fun gpo(pdolData: List<Int>): ByteArray {
+        val length = arrayOf(pdolData.size)
+        val data = arrayOf(0x83) + length + pdolData
+        val dataLength = arrayOf(data.size)
+        return dep.transceive(
+            (GPO + dataLength + data + arrayOf(0x00))
+                .map { it.toByte() }
+                .toByteArray()
+        )
+    }
+}
