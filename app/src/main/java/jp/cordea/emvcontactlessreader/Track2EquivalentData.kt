@@ -5,10 +5,15 @@ class Track2EquivalentData(
     val expiredAt: String
 ) {
     companion object {
+        val UNAVAILABLE = Track2EquivalentData("", "")
+
         private const val TAG = 0x57.toByte()
 
         fun parse(array: ByteArray): Track2EquivalentData {
             val first = array.indexOf(TAG)
+            if (first < 0) {
+                return UNAVAILABLE
+            }
             val length = array[first + 1].toInt()
             val index = first + 2
             val data = array
