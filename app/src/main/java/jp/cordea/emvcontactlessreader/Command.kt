@@ -9,10 +9,10 @@ class SelectCommand(private val dep: IsoDep) : Command() {
         private val SELECT = arrayOf(0x00, 0xA4, 0x04, 0x00)
     }
 
-    fun select(aid: Array<Int>): ByteArray {
-        val length = arrayOf(aid.size)
+    fun select(aid: ApplicationIdentifier): ByteArray {
+        val length = arrayOf(aid.id.size)
         return dep.transceive(
-            (SELECT + length + aid + arrayOf(0x00))
+            (SELECT + length + aid.id + arrayOf(0x00))
                 .map { it.toByte() }
                 .toByteArray()
         )
