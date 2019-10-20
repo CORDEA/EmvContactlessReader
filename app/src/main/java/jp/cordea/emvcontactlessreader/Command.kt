@@ -19,6 +19,20 @@ class SelectCommand(private val dep: IsoDep) : Command() {
     }
 }
 
+class ReadRecordCommand(private val dep: IsoDep) : Command() {
+    companion object {
+        private val READ_RECORD = arrayOf(0x00, 0xB2)
+    }
+
+    fun read(number: Int, param: Int): ByteArray {
+        return dep.transceive(
+            (READ_RECORD + arrayOf(number, param) + arrayOf(0x00))
+                .map { it.toByte() }
+                .toByteArray()
+        )
+    }
+}
+
 class GpoCommand(private val dep: IsoDep) : Command() {
     companion object {
         private val GPO = arrayOf(0x80, 0xA8, 0x00, 0x00)
