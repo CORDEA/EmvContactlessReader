@@ -1,13 +1,13 @@
 package jp.cordea.emvcontactlessreader
 
-class Track2Data(
+class Track2EquivalentData(
     val pan: String,
     val expiredAt: String
 ) {
     companion object {
         private const val TAG = 0x57.toByte()
 
-        fun parse(array: ByteArray): Track2Data {
+        fun parse(array: ByteArray): Track2EquivalentData {
             val first = array.indexOf(TAG)
             val length = array[first + 1].toInt()
             val index = first + 2
@@ -17,7 +17,7 @@ class Track2Data(
                 .split("d")
             val year = data[1].slice(0 until 2)
             val month = data[1].slice(2 until 4)
-            return Track2Data(
+            return Track2EquivalentData(
                 data.first(),
                 "$month/$year"
             )
